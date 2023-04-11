@@ -75,6 +75,7 @@ def make_text(chains, n_gram):
     """Return text from chains."""
 
     words = []
+    punct = ["." , "?" , "!"]
 
     # .keys() -> dict_keys[('Would', 'you'), ..., ]
     # We can type cast it to a list using the list() constructor --> list(dict.keys())
@@ -91,9 +92,20 @@ def make_text(chains, n_gram):
     # .extend([4, 5]) --> [1, 2, 3, 4, 5]
     # .extend("am?") --> [1, 2, 3, a, m, ?]
     random_key = choice(list(chains.keys()))
+
+    # check if random_key's first word has a capital letter
+    # if not, we should keep getting another random_key
+    while not random_key[0][0].isupper():
+        random_key = choice(list(chains.keys()))
+
     random_word = choice(chains[random_key])
     words.extend(random_key)
-    words.append(random_word)
+    words.append(random_word)       # We can potentially already have a list that begins with a capital letter and has punctuation
+
+    # words = ['Sam', 'I', 'am?']
+    if words[-1][-1] in punct:
+        return ' '.join(words)
+    
     # With n_gram, to make a new key, we want to take every word but the first from the original key
     # and include the value
     # to take every word but the first from original, random_key[1:] and then include random word
@@ -103,10 +115,15 @@ def make_text(chains, n_gram):
 
     # Keep making a new key, getting a random word and adding to words list
     # as long as new key exists in our dictionary
+    # .isupper() checks if all characters in a string are uppercase
     while new_key in chains:
         new_word = choice(chains[new_key])
         words.extend(new_key)
         words.append(new_word)
+
+        if words[-1][-1] in punct:
+            return ' '.join(words)
+
         new_key = new_key[1:n_gram] + (new_word,)
 
     return ' '.join(words)
