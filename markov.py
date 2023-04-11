@@ -102,9 +102,10 @@ def make_text(chains, n_gram):
     words.extend(random_key)
     words.append(random_word)       # We can potentially already have a list that begins with a capital letter and has punctuation
 
-    # words = ['Sam', 'I', 'am?']
-    if words[-1][-1] in punct:
-        return ' '.join(words)
+    # words = ['Sam', 'I', 'am?', 'was', 'done.']
+    for idx, word in enumerate(words):
+        if word[-1] in punct:
+            return ' '.join(words[:idx + 1])
     
     # With n_gram, to make a new key, we want to take every word but the first from the original key
     # and include the value
@@ -121,8 +122,9 @@ def make_text(chains, n_gram):
         words.extend(new_key)
         words.append(new_word)
 
-        if words[-1][-1] in punct:
-            return ' '.join(words)
+        for idx, word in enumerate(words):
+            if word[-1] in punct:
+                return ' '.join(words[:idx + 1])
 
         new_key = new_key[1:n_gram] + (new_word,)
 
